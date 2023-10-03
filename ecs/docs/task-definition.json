@@ -1,0 +1,20 @@
+[
+  {
+    "name": "docs",
+    "image": "nginx",
+    "memory": 64,
+    "portMappings": [
+      {
+        "name": "docs",
+        "containerPort": 8080,
+        "protocol": "tcp"
+      }
+    ],
+    "essential": true,
+    "dockerLabels": {
+      "traefik.enable": "true",
+      "traefik.http.routers.docs.entrypoints": "web",
+      "traefik.http.routers.docs.rule": "Host(`docs.internal.domain.com`)"
+    }
+  }
+]

@@ -1,0 +1,15 @@
+# vim:ft=yaml.ansible
+---
+- name: Restart postgresql
+  ansible.builtin.systemd:
+    state: restarted
+    name: postgresql-15
+  become_user: root
+  become: true
+
+- name: Reload postgresql
+  ansible.builtin.systemd:
+    state: reloaded
+    name: postgresql-15
+  become_user: root
+  become: true

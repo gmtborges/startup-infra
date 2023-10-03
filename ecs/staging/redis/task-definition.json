@@ -1,0 +1,31 @@
+[
+  {
+    "name": "cache",
+    "image": "redis/redis-stack:latest",
+    "memory": 256,
+    "portMappings": [
+      {
+        "name": "cache",
+        "containerPort": 6379,
+        "hostPort": 6379,
+        "protocol": "tcp"
+      }
+    ],
+    "essential": true,
+    "mountPoints": [
+      {
+        "sourceVolume": "redis-staging-vol",
+        "containerPath": "/data"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/staging-cluster",
+        "awslogs-region": "us-east-2",
+        "awslogs-stream-prefix": "ecs"
+      },
+      "secretOptions": []
+    }
+  }
+]

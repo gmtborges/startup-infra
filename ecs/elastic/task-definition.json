@@ -1,0 +1,53 @@
+[
+  {
+    "name": "elasticsearch-1",
+    "hostname": "es-1",
+    "image": "docker.elastic.co/elasticsearch/elasticsearch:8.9.1",
+    "memory": 2048,
+    "portMappings": [
+      {
+        "name": "elasticsearch",
+        "hostPort": 9200,
+        "containerPort": 9200,
+        "protocol": "tcp"
+      }
+    ],
+    "ulimits": [
+      {
+        "name": "memlock",
+        "hardLimit": -1,
+        "softLimit": -1
+      }
+    ],
+    "essential": true,
+    "mountPoints": [
+      {
+        "sourceVolume": "elasticsearch-vol",
+        "containerPath": "/usr/share/elasticsearch/data"
+      }
+    ],
+    "environment": [
+      {
+        "name": "cluster.initial_master_nodes",
+        "value": "es-1"
+      },
+      {
+        "name": "xpack.security.enabled",
+        "value": "false"
+      },
+      {
+        "name": "xpack.security.http.ssl.enabled",
+        "value": "false"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/staging-cluster",
+        "awslogs-region": "us-east-2",
+        "awslogs-stream-prefix": "ecs"
+      },
+      "secretOptions": []
+    }
+  }
+]

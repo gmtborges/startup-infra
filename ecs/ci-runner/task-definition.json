@@ -1,0 +1,45 @@
+[
+  {
+    "name": "ci-runner",
+    "image": "drone/drone-runner-docker:1",
+    "memory": 256,
+    "portMappings": [
+      {
+        "name": "ci-runner",
+        "containerPort": 3000,
+        "protocol": "tcp"
+      }
+    ],
+    "essential": true,
+    "environment": [
+      {
+        "name": "DRONE_RPC_PROTO",
+        "value": "http"
+      },
+      {
+        "name": "DRONE_RPC_HOST",
+        "value": "ci.internal.domain.com"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "DRONE_RPC_SECRET",
+        "valueFrom": "arn:aws:ssm:us-east-2:322700331992:parameter/DRONE_RPC_SECRET"
+      }
+    ],
+    "mountPoints": [
+      {
+        "sourceVolume": "dockersock",
+        "containerPath": "/var/run/docker.sock"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/staging-cluster",
+        "awslogs-region": "us-east-2",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
+  }
+]

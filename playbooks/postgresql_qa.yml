@@ -1,0 +1,9 @@
+# vim:ft=yaml.ansible
+---
+- name: "Install PostgreSQL 15 on AlmaLinux/8, create user, and database"
+  hosts: all
+  become: true
+
+  roles:
+    - postgresql_install
+    - {role: postgresql_bootstrap, become_user: postgres}
