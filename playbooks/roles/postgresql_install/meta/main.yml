@@ -1,7 +1,7 @@
 galaxy_info:
   author: Gustavo Martins T Borges
   description: Install Postgresql on AlmaLinux/8
-  company: domain.com
+  company: app.com
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value

@@ -34,7 +34,7 @@
     "dockerLabels": {
       "traefik.enable": "true",
       "traefik.http.routers.traefik.entrypoints": "web",
-      "traefik.http.routers.traefik.rule": "Host(`traefik.internal.domain.com`)",
+      "traefik.http.routers.traefik.rule": "Host(`traefik.domain.com`)",
       "traefik.http.routers.traefik.service": "api@internal"
     },
     "logConfiguration": {
@@ -50,15 +50,11 @@
     "image": "cloudflare/cloudflared",
     "memory": 64,
     "essential": true,
-    "command": [
-      "tunnel",
-      "--no-autoupdate",
-      "run"
-    ],
+    "command": ["tunnel", "--no-autoupdate", "run"],
     "secrets": [
       {
         "name": "TUNNEL_TOKEN",
-        "valueFrom": "arn:aws:ssm:us-east-2:322700331992:parameter/CLOUDFLARE_TUNNEL_TOKEN"
+        "valueFrom": "ssm-parameter/CLOUDFLARE_TUNNEL_TOKEN"
       }
     ]
   }

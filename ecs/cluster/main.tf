@@ -7,12 +7,6 @@ terraform {
   }
 }
 
-# Configure the AWS Provider
-provider "aws" {
-  profile = "app-staging"
-  region  = "us-east-2"
-}
-
 resource "aws_cloudwatch_log_group" "cluster_log_group" {
   name = "/ecs/${var.cluster}-cluster"
 }

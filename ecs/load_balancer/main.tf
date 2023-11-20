@@ -33,7 +33,7 @@ resource "aws_lb_listener" "ecs-ingress-https" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = "arn:aws:acm:us-east-2:322700331992:certificate/cbdb09e1-342d-4e6c-8008-ebc02dfe4001"
+  certificate_arn   = "arn:aws:acm:us-east-2:account-id:certificate/cbdb09e1-342d-4e6c-8008-ebc02dfe4001"
 
   default_action {
     type             = "forward"

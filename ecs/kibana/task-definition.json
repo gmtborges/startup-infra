@@ -14,11 +14,11 @@
     "environment": [
       {
         "name": "ELASTICSEARCH_HOSTS",
-        "value": "[\"http://elastic.internal.domain.com:9200\"]"
+        "value": "[\"http://elastic.internal.app.com:9200\"]"
       },
       {
         "name": "SERVER_PUBLICBASEURL",
-        "value": "https://logs.internal.domain.com"
+        "value": "https://logs.internal.app.com"
       },
       {
         "name": "xpack.security.enabled",
@@ -32,7 +32,7 @@
     "dockerLabels": {
       "traefik.enable": "true",
       "traefik.http.routers.kibana.entrypoints": "web",
-      "traefik.http.routers.kibana.rule": "Host(`logs.internal.domain.com`)"
+      "traefik.http.routers.kibana.rule": "Host(`logs.internal.app.com`)"
     },
     "logConfiguration": {
       "logDriver": "awslogs",

@@ -7,16 +7,10 @@ terraform {
   }
 }
 
-# Configure the AWS Provider
-provider "aws" {
-  profile = "app-staging"
-  region  = "us-east-2"
-}
-
 resource "aws_ecs_task_definition" "elasticsearch" {
   family                = "elasticsearch"
   network_mode          = "bridge"
-  execution_role_arn    = "arn:aws:iam::322700331992:role/ecsTaskExecutionRole"
+  execution_role_arn    = "arn:aws:iam::account-id:role/ecsTaskExecutionRole"
   container_definitions = file("task-definition.json")
 
   placement_constraints {

@@ -2,6 +2,6 @@ FROM alpine
 
 WORKDIR /config
 
-COPY routers.yml .
+COPY file_provider.yml .
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "postgres-exporter",
+    "image": "quay.io/prometheuscommunity/postgres-exporter",
+    "memory": 256,
+    "portMappings": [
+      {
+        "containerPort": 9187,
+        "hostPort": 9187,
+        "protocol": "tcp"
+      }
+    ],
+    "dockerLabels": {
+      "traefik.enable": "true",
+      "traefik.http.routers.pg-exporter.entrypoints": "web",
+      "traefik.http.routers.pg-exporter.rule": "Host(`pg-exporter.prod.app.com`)"
+    },
+    "secrets": [
+      {
+        "name": "DATA_SOURCE_NAME",
+        "valueFrom": "arn:aws:ssm:sa-east-1:account-id:parameter/DATA_SOURCE_NAME"
+      }
+    ],
+    "essential": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/prod-cluster",
+        "awslogs-region": "sa-east-1",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "name": "cadvisor-exporter",
+    "image": "google/cadvisor",
+    "memory": 256,
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "hostPort": 9200,
+        "protocol": "tcp"
+      }
+    ],
+    "command": [
+      "--logtostderr=true",
+      "--docker_only=true"
+    ],
+    "essential": true,
+    "mountPoints": [
+      {
+        "sourceVolume": "root",
+        "containerPath": "/rootfs",
+        "readOnly": true
+      },
+      {
+        "sourceVolume": "var_run",
+        "containerPath": "/var/run",
+        "readOnly": false
+      },
+      {
+        "sourceVolume": "sys",
+        "containerPath": "/sys",
+        "readOnly": true
+      },
+      {
+        "sourceVolume": "var_lib_docker",
+        "containerPath": "/var/lib/docker",
+        "readOnly": true
+      }
+    ],
+    "devices": [
+      {
+        "hostPath": "/dev/kmsg"
+      }
+    ],
+    "privileged": true,
+    "readonlyRootFilesystem": false,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/prod-cluster",
+        "awslogs-region": "sa-east-1",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
+  }
+]

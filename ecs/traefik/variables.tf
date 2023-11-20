@@ -1,6 +1,11 @@
-variable "vpc_id" {
+variable "env" {
   type    = string
-  default = "vpc-02ff8e8729ab41a69"
+  default = "staging"
+}
+
+variable "aws_region" {
+  type    = string
+  default = "us-east-2"
 }
 
 variable "task_count" {

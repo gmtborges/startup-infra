@@ -34,7 +34,7 @@
   },
   {
     "name": "config",
-    "image": "322700331992.dkr.ecr.us-east-2.amazonaws.com/fluent-bit-config",
+    "image": "account-id.dkr.ecr.us-east-2.amazonaws.com/fluent-bit-config",
     "memory": 64,
     "essential": true,
     "mountPoints": [

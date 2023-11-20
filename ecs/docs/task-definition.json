@@ -1,7 +1,7 @@
 [
   {
     "name": "docs",
-    "image": "nginx",
+    "image": "account-id.dkr.ecr.us-east-2.amazonaws.com/docs",
     "memory": 64,
     "portMappings": [
       {
@@ -14,7 +14,7 @@
     "dockerLabels": {
       "traefik.enable": "true",
       "traefik.http.routers.docs.entrypoints": "web",
-      "traefik.http.routers.docs.rule": "Host(`docs.internal.domain.com`)"
+      "traefik.http.routers.docs.rule": "Host(`docs.internal.app.com`)"
     }
   }
 ]

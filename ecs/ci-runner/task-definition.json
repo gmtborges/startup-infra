@@ -2,7 +2,7 @@
   {
     "name": "ci-runner",
     "image": "drone/drone-runner-docker:1",
-    "memory": 256,
+    "memory": 512,
     "portMappings": [
       {
         "name": "ci-runner",
@@ -18,13 +18,13 @@
       },
       {
         "name": "DRONE_RPC_HOST",
-        "value": "ci.internal.domain.com"
+        "value": "ci.internal.app.com"
       }
     ],
     "secrets": [
       {
         "name": "DRONE_RPC_SECRET",
-        "valueFrom": "arn:aws:ssm:us-east-2:322700331992:parameter/DRONE_RPC_SECRET"
+        "valueFrom": "arn:aws:ssm:us-east-2:account-id:parameter/DRONE_RPC_SECRET"
       }
     ],
     "mountPoints": [
