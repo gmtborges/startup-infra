@@ -1,9 +1,6 @@
 # vim:ft=yaml.ansible
----
 - name: "Install node_exporter in the cluster instances"
-  hosts: ecs_cluster
+  hosts: swarm
   become: true
-
   roles:
     - prometheus.prometheus.node_exporter
-

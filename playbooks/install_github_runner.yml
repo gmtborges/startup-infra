@@ -1,0 +1,87 @@
+# vim:ft=yaml.ansible
+- name: Deploy GitHub self-hosted runner
+  hosts: swarm
+  become: true
+  vars:
+    runner_workdir: "/opt/github-runner"
+    github_runner_version: "2.316.1"
+    org: "MyOrg"
+    env: "production"
+    token: "{{ undef(hint='You must specify the runner token') }}"
+  tasks:
+    - name: Copy ssh deploy key
+      ansible.builtin.copy:
+        src: "files/id_ed25519"
+        dest: "/home/admin/.ssh"
+        mode: "0600"
+        owner: "admin"
+        group: "admin"
+
+    - name: Git pull infra project
+      become: true
+      become_user: admin
+      ansible.builtin.git:
+        repo: git@github.com:{{ org }}/infra.git
+        dest: /home/admin/infra
+        version: main
+
+    - name: Create runner working directory
+      ansible.builtin.file:
+        path: "{{ runner_workdir }}"
+        state: directory
+        owner: "admin"
+        group: "admin"
+        mode: "0755"
+
+    - name: Download GitHub runner
+      ansible.builtin.get_url:
+        url: "https://github.com/actions/runner/releases/download/v{{ github_runner_version }}/actions-runner-linux-x64-{{ github_runner_version }}.tar.gz"
+        dest: "{{ runner_workdir }}/actions-runner-linux-x64-{{ github_runner_version }}.tar.gz"
+        mode: "0644"
+
+    - name: Extract GitHub runner
+      ansible.builtin.unarchive:
+        src: "{{ runner_workdir }}/actions-runner-linux-x64-{{ github_runner_version }}.tar.gz"
+        dest: "{{ runner_workdir }}"
+        remote_src: true
+        creates: "{{ runner_workdir }}/config.sh"
+      become: true
+      become_user: "admin"
+
+    - name: Configure the runner
+      ansible.builtin.shell: |
+        ./config.sh --url https://github.com/{{ org }} --token {{ token | mandatory }} --unattended --name $(hostname)-{{ env }}
+      register: github_config
+      changed_when: github_config.rc != 0
+      args:
+        chdir: "{{ runner_workdir }}"
+      become: true
+      become_user: "admin"
+
+    - name: Create systemd service file
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/github-runner.service
+        content: |
+          [Unit]
+          Description=GitHub Actions Runner
+          After=network.target
+
+          [Service]
+          ExecStart={{ runner_workdir }}/run.sh
+          WorkingDirectory={{ runner_workdir }}
+          User=admin
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: "644"
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable and start GitHub runner service
+      ansible.builtin.systemd:
+        name: github-runner
+        enabled: true
+        state: started

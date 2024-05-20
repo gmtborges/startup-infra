@@ -1,0 +1,13 @@
+http:
+  routers:
+    app-blue-green:
+      service: app-blue-green-svc
+      rule: "Host(`api.prod.app.gg`) || Host(`api.app.gg`)"
+  services:
+    app-blue-green-svc:
+      weighted:
+        services:
+          - name: app-blue@ecs
+            weight: 50
+          - name: app-green@ecs
+            weight: 50

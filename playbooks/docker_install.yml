@@ -1,0 +1,44 @@
+# vim:ft=yaml.ansible
+- name: Install Docker on Debian 11
+  hosts: swarm
+  become: true
+  vars:
+    user: admin
+  tasks:
+    - name: Update all packages to the latest version
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+    - name: Install required packages for Docker
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+    - name: Add Docker’s official GPG key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+    - name: Set up the stable repository
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+        state: present
+        update_cache: yes
+    - name: Install Docker Engine
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+    - name: Ensure Docker service is enabled and running
+      ansible.builtin.systemd:
+        name: docker
+        enabled: yes
+        state: started
+    - name: Add user to the Docker group
+      ansible.builtin.user:
+        name: "{{ user }}"
+        groups: docker
+        append: yes

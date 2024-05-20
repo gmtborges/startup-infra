@@ -1,0 +1,52 @@
+services:
+  loki:
+    image: grafana/loki
+    command:
+      - "-config.file=/etc/loki/config.yaml"
+    configs:
+      - source: loki 
+        target: /etc/loki/config.yaml
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == node1"
+    ports:
+      - 3100:3100
+    volumes:
+      - loki:/tmp
+    networks:
+      - log
+      - o11y
+
+  promtail:
+    image: grafana/promtail
+    deploy:
+      mode: global
+    ports:
+      - 9080:9080
+    command:
+      - "-config.file=/etc/promtail/config.yaml"
+    configs:
+      - source: promtail
+        target: /etc/promtail/config.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - log
+
+configs:
+  loki:
+    file: ./loki-config.yaml
+  promtail:
+    file: ./promtail-config.yaml
+
+volumes:
+  loki:
+
+networks:
+  log:
+    external: true
+  o11y:
+    external: true
+
+

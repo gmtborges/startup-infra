@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  traefik:
+    image: traefik:v2.11
+    command:
+      [
+        "--log.level=info",
+        "--api.dashboard=true",
+        "--ping=true",
+        "--accesslog=true",
+        "--accesslog.format=json",
+        "--providers.docker",
+        "--providers.docker.swarmMode",
+        "--providers.docker.exposedByDefault=false",
+        "--providers.docker.network=web",
+        "--entrypoints.http.address=:80",
+        "--entryPoints.http.forwardedHeaders.insecure",
+      ]
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.traefik.rule=Host(`proxy.prod.app.gg`)
+        - traefik.http.routers.traefik.service=api@internal
+        - traefik.http.services.dummy-svc.loadbalancer.server.port=9999
+    environment:
+      - TZ=America/Sao_Paulo
+    labels:
+      - logging=promtail
+      - logging_jobname=proxy
+    ports:
+      - 8090:8080
+      - 8000:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

@@ -1,0 +1,88 @@
+version: "3.9"
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.98.0
+    ports:
+      - 4318:4318
+      - 9464
+    configs:
+      - source: otel-config
+        target: /etc/otelcol-contrib/config.yaml
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == node2
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.otel-collector.rule=Host(`otelcol.prod.app.gg`)
+        - traefik.http.services.otel-collector.loadbalancer.server.port=4318
+    networks:
+      - o11y
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      [
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--storage.tsdb.retention.time=3d",
+        "--enable-feature=remote-write-receiver",
+        "--query.lookback-delta=30s",
+      ]
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    ports:
+      - 9090:9090
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == node2
+    networks:
+      - o11y
+
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_SERVER_ROOT_URL=http://grafana.prod.app.gg
+    volumes:
+      - grafana:/var/lib/grafana
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == node2
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.grafana.rule=Host(`grafana.prod.app.gg`)
+        - traefik.http.services.grafana.loadbalancer.server.port=3000
+    networks:
+      - o11y
+
+  tempo:
+    image: grafana/tempo
+    ports:
+      - 4317
+      - 3200
+    command:
+      - "-config.file=/etc/tempo/tempo.yaml"
+    configs:
+      - source: tempo
+        target: /etc/tempo/tempo.yaml
+    networks:
+      - o11y
+
+configs:
+  tempo:
+    file: ./tempo.yaml
+  otel-config:
+    file: ./otel-collector-config.yaml
+
+volumes:
+  prometheus:
+  grafana:
+
+networks:
+  o11y:

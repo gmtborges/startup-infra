@@ -1,6 +1,0 @@
-cluster     = "prod"
-snapshot_id = "snap-0c859f014d190492f"
-ami_id      = "ami-0f389f9921762940e"
-ec2_key     = "prod-sp-key"
-aws_sg      = "sg-07ac38f80bc84044a"
-aws_region  = "sa-east-1"
